@@ -1,0 +1,24 @@
+name: Log Analysis
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'  # 每2小時執行一次
+  workflow_dispatch:
+
+jobs:
+  analyze_logs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+    - name: Install dependencies
+      run: pip install --upgrade pip
+    - name: Download logs from FTP
+      run: python download_logs.py
+    - name: Analyze logs
+      run: python log_analyzer.py
+    - name: Show analysis result
+      run: cat logs/search_results.json
