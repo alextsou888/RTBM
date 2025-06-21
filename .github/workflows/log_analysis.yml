@@ -1,0 +1,28 @@
+name: Auto Log Analyzer
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download logs from FTP
+        run: python download_logs.py
+
+      - name: Run log analyzer
+        run: python log_analyzer.py analyze logs/
