@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 playwright
 pytest
 pytest-playwright
-=======
-pytest
->>>>>>> dfbaaf6 (Add workflow and project files)
+
+
+
