@@ -1,5 +1,3 @@
-# log_analyzer.py
-
 import json
 import re
 from pathlib import Path
@@ -11,8 +9,7 @@ def analyze_log_folder(folder_path="logs"):
 
     log_files = list(folder.glob("*.log")) + list(folder.glob("*.txt"))
     if not log_files:
-        print("❌ 找不到 .log 或 .txt 檔案")
-        return
+        return False, "❌ 找不到 .log 或 .txt 檔案"
 
     largest_file = max(log_files, key=lambda f: f.stat().st_size)
     error_lines = []
@@ -53,11 +50,15 @@ def analyze_log_folder(folder_path="logs"):
     with output_file.open("w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"✅ 分析完成：{largest_file.name}")
-    print(f"📄 結果已儲存：{output_file}")
+    if not is_increasing:
+        return False, f"❌ 遞增錯誤: {violations}"
+    else:
+        return True, f"✅ 分析完成：{largest_file.name}"
 
 if __name__ == "__main__":
-    # 支援命令列參數可指定資料夾，預設 logs/
     path = sys.argv[1] if len(sys.argv) > 1 else "logs"
-    analyze_log_folder(path)
+    success, message = analyze_log_folder(path)
+    print(message)
+    # 根據分析結果設定退出碼
+    sys.exit(0 if success else 1)
 
