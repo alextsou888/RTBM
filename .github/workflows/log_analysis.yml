@@ -1,9 +1,10 @@
 name: Auto Log Analyzer
 
 on:
+  push:              # 推送時觸發
   schedule:
-    - cron: "0 */2 * * *"
-  workflow_dispatch:
+    - cron: "0 */2 * * *"   # 每 2 小時執行一次
+  workflow_dispatch:        # 手動執行
 
 jobs:
   analyze:
@@ -26,3 +27,4 @@ jobs:
 
       - name: Run log analyzer
         run: python log_analyzer.py analyze logs/
+
