@@ -22,9 +22,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: List logs folder before download
+        run: dir logs
+
       - name: Download logs from FTP
         run: python download_logs.py
 
+      - name: List logs folder after download
+        run: dir logs
+
       - name: Run log analyzer
         run: python log_analyzer.py analyze logs/
+
+      - name: Show analysis result
+        run: type logs\search_results.json
 
