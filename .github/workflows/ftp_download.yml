@@ -1,0 +1,36 @@
+name: Log Analyzer every 2 hours
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'  # 每兩小時執行一次
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip
+
+      - name: Download largest .txt file from FTP
+        run: python ftp_download.py --host 10.56.27.41 --user admin --passwd admin --remote_dir "E:\\RTBM_StabilityTool_2.1.2.1\\Log" --local_dir logs
+
+      - name: Run log analysis
+        run: python log_analyzer.py logs
+
+      - name: Show analysis result in summary
+        if: always()
+        run: |
+          echo "## ✅ Search Result JSON" >> $GITHUB_STEP_SUMMARY
+          type logs\search_results.json >> $GITHUB_STEP_SUMMARY
+
+
